@@ -34,7 +34,7 @@ jobs:
 
     - name: Copy Dockerfile to remote server
       run: |
-        scp -o StrictHostKeyChecking=no -i private_key Dockerfile root@$REMOTE_HOST:$REMOTE_DIR/
+        scp -o StrictHostKeyChecking=no -i private_key docker-compose.yml root@$REMOTE_HOST:$REMOTE_DIR/
 
     - name: SSH into remote server and deploy
       run: |
