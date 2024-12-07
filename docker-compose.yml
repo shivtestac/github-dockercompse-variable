@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   nginx:
-    image: ${NGINX_IMAGE}:latest
+    image: ${NGINX_IMAGE}
     container_name: my_nginx_container
     ports:
       - 80:80
