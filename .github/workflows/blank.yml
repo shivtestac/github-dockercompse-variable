@@ -39,7 +39,7 @@ jobs:
     - name: SSH into remote server and deploy
       run: |
         ssh -o StrictHostKeyChecking=no -i private_key root@$REMOTE_HOST << EOF
-          export NGINX_IMAGE=/$NGINX_IMAGE
+          export $NGINX_IMAGE=/$NGINX_IMAGE
           cd $REMOTE_DIR
           docker-compose up -d         
         EOF
