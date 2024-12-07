@@ -1,0 +1,45 @@
+# .github/workflows/deploy.yml
+name: Deploy MySQL Docker Image
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      REMOTE_HOST: 125.17.72.92  # IP address of the remote server
+      REMOTE_DIR: /gitlab/lo/data  # Directory where files should be copied
+      NGINX_IMAGE: ${{ vars.NGINX_IMAGE }}
+      PRIVATE_KEY: ${{ secrets.KEY }}  # GitHub secret for private key
+
+    steps:
+    - name: Checkout repositoryz
+      uses: actions/checkout@v3
+
+    
+
+    - name: Set up SSH key
+      run: |
+        echo "$PRIVATE_KEY" > private_key
+        echo "$NGINX_IMAGE"
+        chmod 600 private_key
+      
+
+    - name: Clear and recreate remote directory
+      run: ssh -o StrictHostKeyChecking=no -i private_key root@$REMOTE_HOST "rm -rf $REMOTE_DIR && mkdir -p $REMOTE_DIR && echo 'Directory $REMOTE_DIR cleaned and recreated.'"
+
+    - name: Copy Dockerfile to remote server
+      run: |
+        scp -o StrictHostKeyChecking=no -i private_key Dockerfile root@$REMOTE_HOST:$REMOTE_DIR/
+
+    - name: SSH into remote server and deploy
+      run: |
+        ssh -o StrictHostKeyChecking=no -i private_key root@$REMOTE_HOST << EOF
+          export NGINX_IMAGE=/$NGINX_IMAGE
+          cd $REMOTE_DIR
+          docker-compose up -d         
+        EOF
